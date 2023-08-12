@@ -12,53 +12,6 @@ import {
 import { Dropdown } from "react-native-element-dropdown";
 import ExpenseService from "../Services/ExpenseService";
 
-const mockData = [
-  {
-    value: 1,
-    field: "sample 1",
-  },
-  {
-    value: 2,
-    field: "sample 2",
-  },
-  {
-    value: 3,
-    field: "sample 3",
-  },
-  {
-    value: 4,
-    field: "sample 4",
-  },
-  {
-    value: 5,
-    field: "sample 5",
-  },
-  {
-    value: 6,
-    field: "sample 6",
-  },
-  {
-    value: 7,
-    field: "sample 7",
-  },
-  {
-    value: 8,
-    field: "sample 8",
-  },
-  {
-    value: 9,
-    field: "sample 9",
-  },
-  {
-    value: 10,
-    field: "sample 10",
-  },
-  {
-    value: 11,
-    field: "sample 11",
-  },
-];
-
 const ExpenseAddModal = ({ visible, toggle, action, style }) => {
   const [categories, setCategories] = useState([]);
 
@@ -88,24 +41,37 @@ const ExpenseAddModal = ({ visible, toggle, action, style }) => {
       <View style={styles.body}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.title}>Insert Expense</Text>
+            <Text style={styles.title}>Add Expense</Text>
             <TouchableOpacity style={styles.closeButton} onPress={toggle}>
               <Icon name="close" style={styles.closeIcon} />
             </TouchableOpacity>
           </View>
           <View style={styles.content}>
+            <Text style={styles.label}>Amount (in ₹):</Text>
             <TextInput
               style={styles.input}
-              placeholder="Amount (in ₹)"
-              keyboardType="numeric"
+              placeholder="0.00"
+              inputMode="decimal"
+              autoFocus={true}
             />
             {/* <TextInput style={styles.input} placeholder="Category" /> */}
+            <Text style={styles.label}>Category:</Text>
             <Dropdown
               style={styles.input}
               data={categories}
+              placeholder="--Select Category--"
+              placeholderStyle={{ color: "#999" }}
               labelField="category"
               valueField="id"
             />
+            <Text style={styles.label}>Note:</Text>
+            <TextInput
+              style={styles.textarea}
+              multiline={true}
+              numberOLines={2}
+              placeholder={"Enter a note."}
+            ></TextInput>
+
             <TouchableOpacity style={styles.submitButton}>
               <Text style={styles.submitText}>Submit</Text>
             </TouchableOpacity>
@@ -125,7 +91,7 @@ const styles = StyleSheet.create({
 
   container: {
     width: 320,
-    height: 270,
+    height: "auto",
     backgroundColor: "#fff",
     justifyContent: "center",
     borderRadius: 16,
@@ -169,13 +135,26 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 10,
     paddingHorizontal: 25,
-    marginTop: 14,
+    marginVertical: 14,
     gap: 10,
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: "500",
   },
   input: {
     width: "100%",
     borderColor: "#ddd",
     height: 50,
+    borderWidth: 2,
+    borderRadius: 8,
+    paddingLeft: 20,
+    fontSize: 16,
+  },
+  textarea: {
+    width: "100%",
+    borderColor: "#ddd",
+    height: 66,
     borderWidth: 2,
     borderRadius: 8,
     paddingLeft: 20,
