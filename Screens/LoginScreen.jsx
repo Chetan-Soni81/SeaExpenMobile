@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import UserServices from "../Services/UserServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,14 +18,20 @@ const LoginScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
 
   const Verification = async () => {
-    try {
-      var res = await UserServices.Verify();
-      if (res.status === 200) {
-        navigation.navigate("Home");
+    console.log("verification invoked");
+    if ((await AsyncStorage.getItem("token")) != null) {
+      try {
+        var res = await UserServices.Verify();
+        if (res.status === 200) {
+          navigation.navigate("Home");
+        }
+      } catch (error) {
+        console.log(error.message);
+        AsyncStorage.removeItem("token");
+        setLoading(false);
       }
-    } catch (error) {
-      console.log(error.message);
-      AsyncStorage.removeItem("token");
+    } else {
+      console.log("token does not exists");
       setLoading(false);
     }
   };
@@ -61,6 +68,10 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.contanier}>
+      <Image
+        style={styles.logo}
+        source={require("../assets/SeaExpenLogo.png")}
+      />
       <Text style={styles.title}>SeaExpen</Text>
       {loading ? (
         <ActivityIndicator
@@ -95,14 +106,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   contanier: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#e0e0e0",
-    gap: 20,
+    gap: 5,
   },
   input: {
     height: 60,
@@ -131,6 +142,11 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   loading: {},
+  logo: {
+    width: 80,
+    resizeMode: "contain",
+    height: 80,
+  },
 });
 
 export default LoginScreen;

@@ -15,7 +15,23 @@ class ExpenseService {
             headers: {
                 Authorization: `Bearer ${ await this.getToken() }`
             }
-        })
+        });
+    }
+
+    async getExpensesById (id) {
+        return axios.get(`${ API_URI }expense/${ id }`, {
+            headers: {
+                Authorization: `Bearer ${ await this.getToken() }`
+            }
+        });
+    }
+
+    async createExpense (data) {
+        return axios.post(`${ API_URI }expense`, data, {
+            headers: {
+                Authorization: `Bearer ${ await this.getToken() }`
+            }
+        });
     }
 
     getCategories () {

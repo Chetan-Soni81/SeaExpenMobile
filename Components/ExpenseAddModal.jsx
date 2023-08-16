@@ -12,8 +12,11 @@ import {
 import { Dropdown } from "react-native-element-dropdown";
 import ExpenseService from "../Services/ExpenseService";
 
-const ExpenseAddModal = ({ visible, toggle, action, style }) => {
+const ExpenseAddModal = ({ visible, toggle, action }) => {
   const [categories, setCategories] = useState([]);
+  const [note, setNote] = useState("");
+  const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState("");
 
   const GetCategories = async () => {
     try {
@@ -31,6 +34,12 @@ const ExpenseAddModal = ({ visible, toggle, action, style }) => {
   useEffect(() => {
     GetCategories();
   }, []);
+
+  const SubmitAction = () => {
+    if (amount && category) {
+      action(amount, category, note);
+    }
+  };
   return (
     <Modal
       style={{ height: "100%" }}
@@ -53,6 +62,7 @@ const ExpenseAddModal = ({ visible, toggle, action, style }) => {
               placeholder="0.00"
               inputMode="decimal"
               autoFocus={true}
+              onChangeText={(text) => setAmount(text)}
             />
             {/* <TextInput style={styles.input} placeholder="Category" /> */}
             <Text style={styles.label}>Category:</Text>
@@ -63,8 +73,11 @@ const ExpenseAddModal = ({ visible, toggle, action, style }) => {
               placeholderStyle={{ color: "#999" }}
               labelField="category"
               valueField="id"
+              onChange={(val) => setCategory(val.id)}
             />
-            <Text style={styles.label}>Note:</Text>
+            <Text style={styles.label} onChangeText={(text) => setNote(text)}>
+              Note:
+            </Text>
             <TextInput
               style={styles.textarea}
               multiline={true}
@@ -72,7 +85,10 @@ const ExpenseAddModal = ({ visible, toggle, action, style }) => {
               placeholder={"Enter a note."}
             ></TextInput>
 
-            <TouchableOpacity style={styles.submitButton}>
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={SubmitAction}
+            >
               <Text style={styles.submitText}>Submit</Text>
             </TouchableOpacity>
           </View>

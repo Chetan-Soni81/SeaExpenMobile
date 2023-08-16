@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Image,
   View,
   Text,
   StyleSheet,
@@ -14,7 +15,6 @@ import ExpenseAddModal from "../Components/ExpenseAddModal";
 import ExpenseService from "../Services/ExpenseService";
 
 const HomeScreen = ({ navigation }) => {
-  const [n, setN] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
   const [show, setShow] = useState(false);
   const [expenses, setExpenses] = useState([]);
 
@@ -23,7 +23,30 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
-  const toggle = () => setShow(!show);
+  const CreateExpense = async (amount, category, note) => {
+    var data = {
+      amount,
+      category,
+      note,
+    };
+
+    console.log(data);
+
+    try {
+      var res = await ExpenseService.createExpense(data);
+
+      if (res.status === 200) {
+        GetExpenses();
+        setShow(false);
+      }
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
+
+  const toggle = () => {
+    setShow(!show);
+  };
 
   const GetExpenses = async () => {
     try {
@@ -50,7 +73,13 @@ const HomeScreen = ({ navigation }) => {
       <StatusBar backgroundColor={"#006060"} />
 
       <View style={styles.header}>
-        <Text style={styles.title}>SeaExpen</Text>
+        <View style={styles.titleContain}>
+          <Image
+            style={styles.logo}
+            source={require("../assets/SeaExpenLogo.png")}
+          />
+          <Text style={styles.title}>SeaExpen</Text>
+        </View>
         <TouchableOpacity style={styles.logout} onPress={LogoutAction}>
           <Icon style={styles.title} name="sign-out" />
         </TouchableOpacity>
@@ -59,12 +88,16 @@ const HomeScreen = ({ navigation }) => {
       <ScrollView>
         <View style={styles.container}>
           {expenses.map((x) => (
-            <ExpenseItem
+            <TouchableOpacity
               key={x.id}
-              amount={x.amount}
-              Category={x.categoryName}
-              recordDate={x.recordedDate}
-            />
+              onPress={() => navigation.navigate("Detail", { expenseId: x.id })}
+            >
+              <ExpenseItem
+                amount={x.amount}
+                Category={x.categoryName}
+                recordDate={x.recordedDate}
+              />
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
@@ -82,7 +115,7 @@ const HomeScreen = ({ navigation }) => {
         style={styles.modal}
         visible={show}
         toggle={setShow}
-        action={() => {}}
+        action={CreateExpense}
       />
     </View>
   );
@@ -104,6 +137,20 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 3.95,
     elevation: 4,
+  },
+  logo: {
+    height: 36,
+    resizeMode: "contain",
+    width: 36,
+    borderColor: "#fff",
+    borderWidth: 0.5,
+    borderRadius: 32,
+  },
+  titleContain: {
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     color: "#fff",
